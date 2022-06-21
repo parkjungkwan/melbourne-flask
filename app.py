@@ -32,9 +32,11 @@ def cabbage():
     max_temp = request.form['max_temp']
     rain_fall = request.form['rain_fall']
     ic(f'{avg_temp}, {min_temp}, {max_temp},{rain_fall}')
+    c = Cabbage()
+    result = c.load_model(avg_temp, min_temp, max_temp, rain_fall)
     render_params = {}
     render_params['result'] = result
-    return render_template('index.html', **render_params)
+    return render_template('cabbage.html', **render_params)
     
 
 if __name__=='__main__':
