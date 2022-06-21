@@ -30,7 +30,7 @@ class Cabbage:
 
     def create_model(self): # 모델생성
         # 텐서모델 초기화(모델템플릿 생성)
-        model = tf.global_variables_initializer()
+        
         # 확률변수 데이터
         self.preprocessing()
         # 선형식(가설)제작 y = Wx+b
@@ -50,7 +50,7 @@ class Cabbage:
         # 트레이닝
         for step in range(100000):
             cost_, hypo_, _ = sess.run([cost, hypothesis, train],
-                                        feed_dict={X: self.xdata, Y: self.y_data})
+                                        feed_dict={X: self.x_data, Y: self.y_data})
             if step % 500 == 0:
                 print('# %d 손실비용: %d'%(step, cost_))
                 print('- 배추가격: %d '%(hypo_[0]))
@@ -61,6 +61,7 @@ class Cabbage:
         print('저장완료')
 
     def load_model(self, avgTemp,minTemp,maxTemp,rainFall): # 모델로드
+        tf.disable_v2_behavior()
         # 선형식(가설)제작 y = Wx+b
         X = tf.placeholder(tf.float32, shape=[None, 4])
         W = tf.Variable(tf.random_normal([4, 1]), name="weight")
@@ -68,7 +69,7 @@ class Cabbage:
         saver = tf.train.Saver()
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
-            saver.restore(sess, os.path.join(self.basedir, 'cabbage', 'cabbage.ckpt'))
+            saver.restore(sess, os.path.join(self.basedir, 'cabbage', 'cabbage.ckpt-1000'))
             data = [[avgTemp,minTemp,maxTemp,rainFall],]
             arr = np.array(data, dtype=np.float32)
             dict = sess.run(tf.matmul(X, W) + b, {X: arr[0:4]})
@@ -79,5 +80,5 @@ class Cabbage:
         
 if __name__=='__main__':
     tf.disable_v2_behavior()
-    Cabbage().preprocessing()
+    Cabbage().create_model()
 
